@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Chat with socket io and node js</title>
+	<style type="text/css">
+		#chat{
+			height: 500px;
+		}
+		#chatWrap{
+			float: left;
+			border: 1px #000 dotted;
+		}
+		#contentWrap{
+			display: none;
+		}
+	</style>
+</head>
+<body>
+
+	<div id="nickWrap">
+		<p>Enter a username: </p>
+		<p id="nickError"></p>
+		<form id="setNick">
+			<input type="35" id="nickname"></input>
+			<input type="submit"></input>
+		</form>
+	</div>
+
+	<div id="contentWrap">
+		<div id="chatWrap">
+			<div id="chat"></div>
+			<form id="sendmessage">
+				<input	size="35" id="message"></input>
+				<input type="submit"></input>
+			</form>
+		</div>
+		<div id="users"></div>
+	</div>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<!-- resides in  node_modules/socket.io -->
+	<script type="text/javascript" src="/socket.io/socket.io.js"></script> 
+	<script type="text/javascript">
+
+	// Client side javascript for socket io
+	
+		jQuery(function($){
+		var socket = io.connect(); //provided by socket.io js
+		var $nickForm = $('#setNick');
+		var $nickError = $('#nickError');
+		var $nickBox = $('#nickBox');
+		var $messageForm = $('#sendmessage');
+		var $messageBox = $('#message');
+		var $users = $('#users');
+		var $chat = $('#chat');
+
+		$nickForm.submit(function(e){
+			e.preventDefault();
+			//callback is used to pick out the duplicate usernames
+			socket.emit('new user', $nickBox.val(), function(data){
+				if (data){ //this data is returned true or false from server
+					$('#nickWrap').hide();
+					$('#contentWrap').show();
+				}else{
+					$nickError.html("That username is already taken");
+				};
+			});
+			$nickBox.val(' ');
+		});
+
+		socket.on('usernames', function(data){
+			var html = '';
+			for(i=0; i < data.length; i++){
+				html += data[i] + '<br/>'
+			}
+			$users.html(html);
+		});
+
+		$messageForm.submit(function(e){
+			e.preventDefault();
+			socket.emit('send message', $messageBox.val());
+			$messageBox.val('');
+		});
+		socket.on('new message', function(data){
+			$chat.append('<b>'+ data.nick + ':  </b>' + data.msg+'<br/>')
+		});
+	});
+	</script>
+</body>
+</html>
