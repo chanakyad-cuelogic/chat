@@ -36,18 +36,19 @@
 		</div>
 		<div id="users"></div>
 	</div>
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	
 	<!-- resides in  node_modules/socket.io -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script> 
 	<script type="text/javascript">
 
 	// Client side javascript for socket io
 	
-		jQuery(function($){
+		$(function(){
 		var socket = io.connect(); //provided by socket.io js
 		var $nickForm = $('#setNick');
 		var $nickError = $('#nickError');
-		var $nickBox = $('#nickBox');
+		var $nickBox = $('#nickname');
 		var $messageForm = $('#sendmessage');
 		var $messageBox = $('#message');
 		var $users = $('#users');
@@ -56,7 +57,7 @@
 		$nickForm.submit(function(e){
 			e.preventDefault();
 			//callback is used to pick out the duplicate usernames
-			socket.emit('new user', $nickBox.val(), function(data){
+			socket.emit('new_user', $nickBox.val(), function(data){
 				if (data){ //this data is returned true or false from server
 					$('#nickWrap').hide();
 					$('#contentWrap').show();
@@ -64,7 +65,7 @@
 					$nickError.html("That username is already taken");
 				};
 			});
-			$nickBox.val(' ');
+			$nickBox.val('');
 		});
 
 		socket.on('usernames', function(data){
@@ -77,10 +78,10 @@
 
 		$messageForm.submit(function(e){
 			e.preventDefault();
-			socket.emit('send message', $messageBox.val());
+			socket.emit('send_message', $messageBox.val());
 			$messageBox.val('');
 		});
-		socket.on('new message', function(data){
+		socket.on('new_message', function(data){
 			$chat.append('<b>'+ data.nick + ':  </b>' + data.msg+'<br/>')
 		});
 	});

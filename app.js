@@ -16,7 +16,7 @@ app.get("/", function(req, res) {
 io.sockets.on('connection', function(socket){
 	
 	//username check on establishing connection
-	socket.on('new user', function(data, callback){
+	socket.on('new_user', function(data, callback){
 		if (nicknames.indexOf(data) != -1){ // is matched
 			callback(false); // that is matched or can send customdata eg (isValid: false)
 		}else{
@@ -29,8 +29,8 @@ io.sockets.on('connection', function(socket){
 	});
 
 	//send messages on establishing connection
-	socket.on('send message', function(data){ 
-		io.sockets.emit('new message', {msg: data, nick: socket.nickname}); //except us
+	socket.on('send_message', function(data){ 
+		io.sockets.emit('new_message', {msg: data, nick: socket.nickname}); //except us
 		// socket.broadcast.emit # send to every once but us
 	});
 
@@ -38,7 +38,7 @@ io.sockets.on('connection', function(socket){
 	socket.on('disconnect', function(data){
 		if (!socket.nickname) return;
 		//splice(index,params(how many shall be remove from index))
-		nickname.splice(nicknames.indexOf(socket.nickname), 1);
+		nickname.slice(nicknames.indexOf(socket.nickname), 1);
 		updateNicknames();
 	});
 
