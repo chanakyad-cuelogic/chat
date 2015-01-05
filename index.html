@@ -13,6 +13,16 @@
 		#contentWrap{
 			display: none;
 		}
+		.msg{
+
+		}
+		.error{
+			color: red;
+		}
+		.wisper{
+			color: grey;
+			font-style: italic;
+		}
 	</style>
 </head>
 <body>
@@ -78,11 +88,18 @@
 
 		$messageForm.submit(function(e){
 			e.preventDefault();
-			socket.emit('send_message', $messageBox.val());
+			socket.emit('send_message', $messageBox.val(), function(data){
+				$chat.append('<span class="error">'+ data + '</span><br/>')
+			});
 			$messageBox.val('');
 		});
+
 		socket.on('new_message', function(data){
-			$chat.append('<b>'+ data.nick + ':  </b>' + data.msg+'<br/>')
+			$chat.append('<span class="msg"><b>'+ data.nick + ':  </b>' + data.msg+'</span><br/>')
+		});
+
+		socket.on('wisper', function(data){
+			$chat.append('<span class="wisper"><b>'+ data.nick + ':  </b>' + data.msg+'</span><br/>')
 		});
 	});
 	</script>
