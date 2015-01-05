@@ -6,7 +6,7 @@ var express = require('express'),
  io = require('socket.io').listen(server),
  nicknames = []; //creating array to grap all the users and display them
 
-server.listen(3000); 
+server.listen(4001); 
 
 app.get("/", function(req, res) {
 	res.sendFile(__dirname+'/index.html');
